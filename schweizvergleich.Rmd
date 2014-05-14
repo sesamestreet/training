@@ -1,0 +1,122 @@
+**Name:** 
+Aufgabe 3.2
+-----------
+
+**Beschreibung:**  
+Vergleich der jährlichen Niederschlagsrate und Temperaturamplitude der alpinen Orte gleicher Altitude Engelberg (zentraler Alpennordhang) und Château d´Oex (westlicher Alpennordhang) mithilfe der von der Gruppe geleisteten Vorarbeit
+
+**Anwendung:**  chunk für chunk ausführen
+
+**Eingabe:**  Daten von Meteoschweiz: http://www.meteoschweiz.admin.ch/web/de/klima/klima_heute/homogene_reihen.html :  
+-homog_mo_ENG.txt  
+-homog_mo_CHD.txt  
+
+**Ausgabe:**  Jeweils zwei Plots:  jährliche Niederschlagsrate und Temperaturamplitude
+
+**Autor:**  Sam
+
+**letzte Änderung:**  14.05.2014      
+
+
+Daten einlesen...
+```{r}
+setwd("C:/Users/Sarah/Desktop/Projekt_Stadtklima/R/rzeug/Daten")
+```
+
+```{r}
+engelberg <- read.table (file="schweiz_engelberg_data.txt",header=TRUE)
+chateaudoex <- read.table (file="schweiz_chateaudoex_data.txt",header=TRUE)
+```
+Ich denke das attach() überschreibt die ursprüngliche Bezeichnung für gut, so lässt es sich schneller eintippen  (kp ob das auch stimmt)
+```{r}
+names(engelberg) <- c ("year","mo","temp","prcp")
+attach(engelberg)
+names(chateaudoex) <- c ("year","mo","temp","prcp")
+attach(chateaudoex)
+```
+
+***Histogramme der jährlichen Temperatur***  
+Engelberg
+```{r}
+plot(engelberg$year,engelberg$temp,xlab="Zeit (a) ",ylab="Temperatur (°C)",main="Engelberg",sub="Jährliche Temperaturamplitude (1864-2014)",type="h")
+```
+
+Château d´Oex
+```{r}
+plot(chateaudoex$year,chateaudoex$temp,xlab="Zeit (a)",ylab="Temperatur (°C)",main="Château d´Oex",sub="Jährliche Temperaturamplitude (1864-2014)",type="h")
+```
+
+***Histogramme des jährlichen Niederschlags***  
+Engelberg
+```{r}
+plot(engelberg$year,engelberg$prcp,xlab="Zeit (a)",ylab="Niederschlag (mm)",main="Engelberg",sub="Jährlicher Niederschlag (1864-2014)",type="h")
+```
+
+Château d´Oex
+```{r}
+plot(chateaudoex$year,chateaudoex$prcp,xlab="Zeit (a)",ylab="Niederschlag (mm)",main="Château d´Oex",sub="Jährlicher Niederschlag (1864-2014)",type="h")
+```
+
+
+kann nur sagen, dass mir die Plots nichts sagen, also  
+
+***Zu Marcos Kommentar zu Lisa***  
+
+Die einzelnen Daten eines bestimmten Zeitrahmens werden im 12er-Schritt "zusammengeworfen", so kann man verschiedene Orte im Monatsverlauf vergleichen:  
+***Differenzierte Darstellung der Temperatur im Jahresverlauf:***  
+Engelberg
+```{r}
+etemp<-subset(engelberg,engelberg$year < 2014, select = temp)
+```
+
+```{r}
+etemp_ts <- ts(etemp, start=c(1879, 1), end=c(2013, 12), frequency=12)
+```
+
+```{r}
+monthplot(etemp_ts,xlab="Zeit (Monate)",ylab="Temperatur (°C)",main="Engelberg",type="l")
+```
+
+Château d´Oex
+```{r}
+ctemp<-subset(chateaudoex,chateaudoex$year < 2014, select = temp)
+```
+habe hier den gleichen Zeitabschnitt verwendet (1879-2013)
+```{r}
+ctemp_ts <- ts(ctemp, start=c(1879, 1), end=c(2013, 12), frequency=12)
+```
+
+```{r}
+monthplot(ctemp_ts,xlab="Zeit (Monate)",ylab="Temperatur (°C)",main="Château d´Oex",type="l")
+```
+
+***Das Gleiche mit Niederschlag:***   
+Engelberg
+```{r}
+eprcp<-subset(engelberg,engelberg$year < 2014, select = prcp)
+```
+
+```{r}
+eprcp_ts <- ts(eprcp, start=c(1879, 1), end=c(2013, 12), frequency=12)
+```
+
+```{r}
+monthplot(eprcp_ts,xlab="Zeit (Monate)",ylab="Niederschlag (mm)",main="Engelberg",type="l")
+```
+
+Château d´Oex
+```{r}
+cprcp<-subset(chateaudoex,chateaudoex$year < 2014, select = prcp)
+```
+
+```{r}
+cprcp_ts <- ts(cprcp, start=c(1879, 1), end=c(2013, 12), frequency=12)
+```
+
+```{r}
+monthplot(cprcp_ts,xlab="Zeit (Monate)",ylab="Niederschlag (mm)",main="Château d´Oex",type="l")
+```
+
+Fazit 
+-----  
+So, wenn man sich die Plots jetzt mal ansieht, fällt auf, dass wenn es zum Skifahren zum Alpennordhang geht am westlichen (Château d´Oex) mehr Schnee fällt. Vice versa, beim Wandern im zentralen Engelberg ist es statistisch wohl wahrscheinlicher nicht nass zu werden...... ;P
